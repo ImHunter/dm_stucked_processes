@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DataCompositionSchema xmlns="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcscom="http://v8.1c.ru/8.1/data-composition-system/common" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<dataSource>
+		<name>ИсточникДанных1</name>
+		<dataSourceType>Local</dataSourceType>
+	</dataSource>
+	<dataSet xsi:type="DataSetQuery">
+		<name>НаборДанных1</name>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>КомплексныйПроцессЗавершен</dataPath>
+			<field>КомплексныйПроцессЗавершен</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>КомплексныйПроцесс</dataPath>
+			<field>КомплексныйПроцесс</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>ЗадачаОжидания</dataPath>
+			<field>ЗадачаОжидания</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>ЗавершившеесяДействиеЗавершен</dataPath>
+			<field>ЗавершившеесяДействиеЗавершен</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>ЗавершившеесяДействие</dataPath>
+			<field>ЗавершившеесяДействие</field>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>ТекстОшибки</dataPath>
+			<field>ТекстОшибки</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>КоличествоПопытокОбработки</dataPath>
+			<field>КоличествоПопытокОбработки</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>МоментВремени</dataPath>
+			<field>МоментВремени</field>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>КогдаЗавис</dataPath>
+			<field>КогдаЗавис</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Когда завис</v8:content>
+				</v8:item>
+			</title>
+			<role>
+				<dcscom:dimension>true</dcscom:dimension>
+			</role>
+		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>МоментВремениСобытия</dataPath>
+			<field>МоментВремениСобытия</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Момент времени события</v8:content>
+				</v8:item>
+			</title>
+		</field>
+		<dataSource>ИсточникДанных1</dataSource>
+		<query>ВЫБРАТЬ
+	ОчередьМаршрутизацииКомплексныхПроцессов.КомплексныйПроцесс КАК КомплексныйПроцесс,
+	ОчередьМаршрутизацииКомплексныхПроцессов.КомплексныйПроцесс.Завершен КАК КомплексныйПроцессЗавершен,
+	ОчередьМаршрутизацииКомплексныхПроцессов.ЗавершившеесяДействие КАК ЗавершившеесяДействие,
+	ОчередьМаршрутизацииКомплексныхПроцессов.ЗавершившеесяДействие.Завершен КАК ЗавершившеесяДействиеЗавершен,
+	ОчередьМаршрутизацииКомплексныхПроцессов.ЗадачаОжидания КАК ЗадачаОжидания,
+	ОчередьМаршрутизацииКомплексныхПроцессов.КоличествоПопытокОбработки КАК КоличествоПопытокОбработки,
+	ОчередьМаршрутизацииКомплексныхПроцессов.МоментВремени КАК МоментВремени,
+	ОчередьМаршрутизацииКомплексныхПроцессов.ТекстОшибки КАК ТекстОшибки,
+	"Во время исполнения" КАК КогдаЗавис,
+	ВЫБОР
+		КОГДА ОчередьМаршрутизацииКомплексныхПроцессов.МоментВремени &gt; 0
+			ТОГДА ДОБАВИТЬКДАТЕ(ДАТАВРЕМЯ(2000, 1, 1, 0, 0, 0), МИНУТА, (ОчередьМаршрутизацииКомплексныхПроцессов.МоментВремени / 10000 - 6308228160) / 6 + 300)
+		ИНАЧЕ ОчередьМаршрутизацииКомплексныхПроцессов.КомплексныйПроцесс.Дата
+	КОНЕЦ КАК МоментВремениСобытия
+ИЗ
+	РегистрСведений.ОчередьМаршрутизацииКомплексныхПроцессов КАК ОчередьМаршрутизацииКомплексныхПроцессов
+ГДЕ
+	ИСТИНА
+	И ОчередьМаршрутизацииКомплексныхПроцессов.КоличествоПопытокОбработки &gt;= 3
+	И НЕ ОчередьМаршрутизацииКомплексныхПроцессов.КомплексныйПроцесс.Завершен
+	И ОчередьМаршрутизацииКомплексныхПроцессов.КомплексныйПроцесс.Состояние = &amp;СостояниеАктивен
+
+ОБЪЕДИНИТЬ ВСЕ
+
+ВЫБРАТЬ
+	ПроцессыДляЗапуска.БизнесПроцесс,
+	ПроцессыДляЗапуска.БизнесПроцесс.Завершен,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	ПроцессыДляЗапуска.МоментВремени,
+	ПроцессыДляЗапуска.ПричинаОтменыСтарта,
+	"При старте",
+	ВЫБОР
+		КОГДА ПроцессыДляЗапуска.МоментВремени &gt; 0
+			ТОГДА ДОБАВИТЬКДАТЕ(ДАТАВРЕМЯ(2000, 1, 1, 0, 0, 0), МИНУТА, (ПроцессыДляЗапуска.МоментВремени / 10000 - 6308228160) / 6 + 300)
+		ИНАЧЕ ПроцессыДляЗапуска.БизнесПроцесс.Дата
+	КОНЕЦ
+ИЗ
+	РегистрСведений.ПроцессыДляЗапуска КАК ПроцессыДляЗапуска
+ГДЕ
+	ПроцессыДляЗапуска.Состояние = &amp;Состояние
+	И НЕ ПроцессыДляЗапуска.БизнесПроцесс.Завершен</query>
+	</dataSet>
+	<calculatedField>
+		<dataPath>ПроцессНавСсылка</dataPath>
+		<expression>ПолучитьНавигационнуюСсылку(КомплексныйПроцесс)</expression>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Навигационная ссылка</v8:content>
+			</v8:item>
+		</title>
+	</calculatedField>
+	<parameter>
+		<name>СостояниеАктивен</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Состояние активен</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:EnumRef.СостоянияБизнесПроцессов</v8:Type>
+		</valueType>
+		<value xsi:type="dcscor:DesignTimeValue">Перечисление.СостоянияБизнесПроцессов.Активен</value>
+		<useRestriction>true</useRestriction>
+	</parameter>
+	<parameter>
+		<name>Состояние</name>
+		<title xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Состояние</v8:content>
+			</v8:item>
+		</title>
+		<valueType>
+			<v8:Type xmlns:d4p1="http://v8.1c.ru/8.1/data/enterprise/current-config">d4p1:EnumRef.СостоянияПроцессовДляЗапуска</v8:Type>
+		</valueType>
+		<value xsi:type="dcscor:DesignTimeValue">Перечисление.СостоянияПроцессовДляЗапуска.СтартОтменен</value>
+		<useRestriction>true</useRestriction>
+	</parameter>
+	<settingsVariant>
+		<dcsset:name>Основной</dcsset:name>
+		<dcsset:presentation xsi:type="v8:LocalStringType">
+			<v8:item>
+				<v8:lang>ru</v8:lang>
+				<v8:content>Зависшие процессы</v8:content>
+			</v8:item>
+		</dcsset:presentation>
+		<dcsset:settings xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows">
+			<dcsset:selection>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>МоментВремениСобытия</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Что</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>КомплексныйПроцесс</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>ЗавершившеесяДействие</dcsset:field>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>ЗадачаОжидания</dcsset:field>
+					</dcsset:item>
+					<dcsset:placement>Vertically</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemFolder">
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Завершено</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>КомплексныйПроцессЗавершен</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Процесс завершен</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:item xsi:type="dcsset:SelectedItemField">
+						<dcsset:field>ЗавершившеесяДействиеЗавершен</dcsset:field>
+						<dcsset:lwsTitle>
+							<v8:item>
+								<v8:lang>ru</v8:lang>
+								<v8:content>Действие завершено</v8:content>
+							</v8:item>
+						</dcsset:lwsTitle>
+					</dcsset:item>
+					<dcsset:placement>Vertically</dcsset:placement>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>КоличествоПопытокОбработки</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:use>false</dcsset:use>
+					<dcsset:field>МоментВремени</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>ТекстОшибки</dcsset:field>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>ПроцессНавСсылка</dcsset:field>
+				</dcsset:item>
+			</dcsset:selection>
+			<dcsset:filter>
+				<dcsset:item xsi:type="dcsset:FilterItemComparison">
+					<dcsset:left xsi:type="dcscor:Field">МоментВремениСобытия</dcsset:left>
+					<dcsset:comparisonType>GreaterOrEqual</dcsset:comparisonType>
+					<dcsset:right xsi:type="v8:StandardBeginningDate">
+						<v8:variant xsi:type="v8:StandardBeginningDateVariant">BeginningOfLastDay</v8:variant>
+					</dcsset:right>
+					<dcsset:userSettingID>6e5bae53-a10e-4290-8622-c3a44615a7bb</dcsset:userSettingID>
+				</dcsset:item>
+			</dcsset:filter>
+			<dcsset:dataParameters>
+				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
+					<dcscor:parameter>Состояние</dcscor:parameter>
+					<dcscor:value xsi:nil="true"/>
+				</dcscor:item>
+			</dcsset:dataParameters>
+			<dcsset:order>
+				<dcsset:item xsi:type="dcsset:OrderItemField">
+					<dcsset:field>МоментВремени</dcsset:field>
+					<dcsset:orderType>Desc</dcsset:orderType>
+				</dcsset:item>
+			</dcsset:order>
+			<dcsset:item xsi:type="dcsset:StructureItemGroup">
+				<dcsset:groupItems>
+					<dcsset:item xsi:type="dcsset:GroupItemField">
+						<dcsset:field>КогдаЗавис</dcsset:field>
+						<dcsset:groupType>Items</dcsset:groupType>
+						<dcsset:periodAdditionType>None</dcsset:periodAdditionType>
+						<dcsset:periodAdditionBegin xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionBegin>
+						<dcsset:periodAdditionEnd xsi:type="xs:dateTime">0001-01-01T00:00:00</dcsset:periodAdditionEnd>
+					</dcsset:item>
+				</dcsset:groupItems>
+				<dcsset:order>
+					<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+				</dcsset:order>
+				<dcsset:selection>
+					<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+				</dcsset:selection>
+				<dcsset:item xsi:type="dcsset:StructureItemGroup">
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemAuto"/>
+					</dcsset:order>
+					<dcsset:selection>
+						<dcsset:item xsi:type="dcsset:SelectedItemAuto"/>
+					</dcsset:selection>
+				</dcsset:item>
+			</dcsset:item>
+		</dcsset:settings>
+	</settingsVariant>
+</DataCompositionSchema>
